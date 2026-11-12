@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday, Rafiq!</title>
+  <style>
+    /* --- RETRO COLOR PALETTE --- */
+    :root {
+      --mustard: #E09F3E;
+      --maroon: #9E2A2B;
+      --slate: #335C67;
+      --vanilla: #FFF3B0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Courier New', Courier, monospace; 
+    }
+
+    body {
+      background-color: var(--vanilla);
+      color: var(--slate);
+      overflow: hidden; 
+    }
+
+    .page {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .active {
+      display: flex;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* --- PAGE 1: LOGIN --- */
+    #login-page { background-color: var(--slate); color: var(--vanilla); }
+    
+    .login-box {
+      background-color: var(--mustard);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 8px 8px 0px var(--maroon);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .login-box h2 { margin-bottom: 20px; color: var(--maroon); font-weight: bold; }
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      background-color: var(--vanilla);
+      color: var(--slate);
+      font-weight: bold;
+    }
+    .login-box button {
+      background-color: var(--maroon);
+      color: var(--vanilla);
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      font-size: 16px;
+    }
+    .error { color: var(--maroon); font-weight: bold; margin-top: 10px; font-size: 14px; display: none; }
+    
+    /* --- PAGE 2: MUSIC --- */
+    #music-page { background-color: var(--mustard); }
+    #music-page h2 { color: var(--maroon); margin-bottom: 20px; font-size: 28px;}
+    #music-page p { color: var(--slate); margin-bottom: 30px; font-size: 18px; font-weight: bold;}
+
+    button.retro-btn {
+      background-color: var(--maroon);
+      color: var(--vanilla);
+      border: 3px solid var(--vanilla);
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px;
+      box-shadow: 5px 5px 0px var(--slate);
+      transition: 0.2s;
+    }
+    button.retro-btn:hover { transform: translateY(-3px); box-shadow: 7px 7px 0px var(--slate); }
+    button.retro-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 5px 5px 0px var(--slate);}
+
+    .hidden { display: none; }
+    .instruction { margin-top: 15px; font-size: 14px; font-style: italic; color: var(--maroon); opacity: 0.8; }
+
+    /* --- PAGE 3: BALLOONS --- */
+    #balloon-page { background-color: var(--vanilla); }
+    .balloon-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+      max-width: 600px;
+      margin-top: 30px;
+    }
+    .balloon {
+      font-size: 50px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      user-select: none; 
+    }
+    .balloon:active { transform: scale(0.9); }
+    .popped { opacity: 0; pointer-events: none; transform: scale(1.5); transition: 0.3s; }
+
+    /* --- PAGE 4: BOOK --- */
+    #book-page { background-color: var(--slate); color: var(--vanilla); padding: 0; }
+
+    .book-container {
+      width: 100%;
+      max-width: 800px;
+      height: 90vh;
+      background-color: var(--vanilla);
+      color: var(--slate);
+      border-radius: 10px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.1), 10px 10px 0px var(--maroon);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer; 
+      overflow-y: auto;
+    }
+    
+    .book-page-content { display: none; width: 100%; }
+    .book-page-content.active-page { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    
+    .book-title { font-size: 24px; font-weight: bold; color: var(--maroon); margin-bottom: 10px; }
+    .book-text { font-size: 16px; line-height: 1.5; margin-bottom: 20px; white-space: pre-wrap; }
+    
+    /* Styling untuk foto agar rapi (bisa 1 atau 2 foto) */
+    .img-container { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: wrap;}
+    .book-img { 
+      max-width: 100%; 
+      max-height: 250px; 
+      border: 5px solid var(--mustard); 
+      border-radius: 5px; 
+      object-fit: cover;
+    }
+    /* Kalau fotonya 2, kecilin dikit biar muat */
+    .img-container .book-img { max-width: 48%; max-height: 200px; }
+
+    .tap-hint { margin-top: 20px; font-size: 12px; opacity: 0.5; animation: bounce 2s infinite; }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @media (max-width: 600px) {
+      .balloon-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+      .balloon { font-size: 35px; }
+      .book-container { padding: 15px; height: 100vh; border-radius: 0; }
+      .img-container .book-img { max-width: 100%; max-height: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. LOGIN PAGE -->
+  <div id="login-page" class="page active">
+    <div class="login-box">
+      <h2>Welcome to your Birthday Gift!</h2>
+      <p style="margin-bottom: 20px; font-size: 14px; color: var(--slate);">Hint Username: The birthday boy's name.<br>Hint Password: Your birth date (DDMMYY).</p>
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      <button onclick="checkLogin()">Enter</button>
+      <p id="login-error" class="error">Oops! Incorrect username or password. Try again!</p>
+    </div>
+  </div>
+
+  <!-- 2. MUSIC PAGE -->
+  <div id="music-page" class="page">
+    <h2>Please play the song first 🎵</h2>
+    <p>To unlock the surprise, you must press the button below.</p>
+    
+    <button id="btn-play" class="retro-btn" onclick="playMusic()">▶ Start the Song</button>
+    <p class="instruction">Press the button above to play the music!</p>
+    
+    <div id="surprise-btn-container" class="hidden" style="margin-top: 30px;">
+      <button class="retro-btn" style="background-color: var(--slate);" onclick="goToBalloons()">Click Here to see the surprise 👉</button>
+    </div>
+
+    <!-- Audio Players (Dua Lagu) -->
+    <audio id="bg-music-1" loop>
+      <source src="lagu1.mp3" type="audio/mpeg"> <!-- Lagu Taylor Swift -->
+    </audio>
+    <audio id="bg-music-2" loop>
+      <source src="lagu2.mp3" type="audio/mpeg"> <!-- Lagu Barasuara -->
+    </audio>
+  </div>
+
+  <!-- 3. BALLOON PAGE -->
+  <div id="balloon-page" class="page">
+    <h2>Pop the balloons to find the number 23!</h2>
+    <div class="balloon-grid" id="balloon-container"></div>
+  </div>
+
+  <!-- 4. BOOK PAGE -->
+  <div id="book-page" class="page">
+    <div class="book-container" id="book-container" onclick="nextPage(event)">
+      
+      <!-- LEMBAR 1 -->
+      <div class="book-page-content active-page">
+        <div class="book-title">Hello there! I know who you are :)</div>
+        <div class="book-text">You're.. Rafiq, right?</div>
+        <img src="foto1.jpeg" alt="Childhood Photo" class="book-img">
+        <div class="tap-hint">(Tap anywhere to turn the page)</div>
+      </div>
+
+      <!-- LEMBAR 2 -->
+      <div class="book-page-content">
+        <div class="book-title">Happy Birthday!</div>
+        <div class="book-text">How are you feeling today on your birthday? I hope you're feeling happy! And I hope you're still very cute like this photo hihi.</div>
+        <img src="foto14.jpeg" alt="Childhood Photo" class="book-img">
+        <div class="tap-hint">(Tap to continue)</div>
+      </div>
+
+      <!-- LEMBAR 3 -->
+      <div class="book-page-content">
+        <div class="book-title">Let me introduce myself</div>
+        <div class="book-text">Well.. let me introduce myself first. I am your future girlfriend! And I'm here to make you smile :))</div>
+        <img src="foto2.jpeg" alt="My Childhood Photo" class="book-img">
+        <div class="tap-hint">(Tap to continue)</div>
+      </div>
+
+      <!-- LEMBAR 4 -->
+      <div class="book-page-content">
+        <div class="book-title">Our Journey</div>
+        <div class="book-text">We spent a lot of our journey together! From day 1 when you went near me and tried to talk to me (while you were still trying to keep your cool).</div>
+        <div class="img-container">
+          <img src="foto3.jpeg" alt="Journey 1" class="book-img">
+          <img src="foto4.jpeg" alt="Journey 2" class="book-img">
+        </div>
+        
+        <div class="book-text" style="margin-top:15px;">When you tried to text me without context HAHA.</div>
+        
+        <div class="book-text">When we had a problem (yeah.. you know.. best staff.. HAHA).</div>
+        <div class="img-container">
+          <img src="foto5.jpeg" alt="Journey 3" class="book-img">
+          <img src="foto6.jpeg" alt="Journey 4" class="book-img">
+        </div>
+        <div class="tap-hint">(Tap to continue)</div>
+      </div>
+
+      <!-- LEMBAR 5 -->
+      <div class="book-page-content">
+        <div class="book-title">More Memories</div>
+        <div class="book-text">When you.. finally tried to reach me again that night.. asking me to go home together, the night before Wisnight.</div>
+        <img src="foto8.jpeg" alt="Journey 5" class="book-img" style="margin-bottom: 10px;">
+
+        <div class="book-text">When we finally had our first date! Still the best date I've ever had hihi.</div>
+        <div class="img-container">
+          <img src="pempekrama.jpg" alt="First Date 1" class="book-img">
+          <img src="foto7.jpeg" alt="First Date 2" class="book-img">
+        </div>
+
+        <div class="book-text" style="margin-top:15px;">When you finally confessed your feelings and asked me to be your girlfriend before you left for KAIST.</div>
+        <!-- GANTI foto_tembak.jpg DENGAN NAMA FILE FOTO ASLIMU -->
+        <img src="foto_tembak.jpg" alt="Confession" class="book-img" style="margin-bottom: 10px;">
+
+        <div class="book-text">And until now.. we even spend 1 year and more together.</div>
+        <!-- GANTI foto_together.jpg DENGAN NAMA FILE FOTO ASLIMU -->
+        <img src="foto_together.jpg" alt="Together" class="book-img">
+        <div class="tap-hint">(Tap to continue)</div>
+      </div>
+
+      <!-- LEMBAR 6 -->
+      <div class="book-page-content">
+        <div class="book-title">So.. on your birthday,</div>
+        <div class="book-text">I just wanted to say..</div>
+        <div class="tap-hint">(Tap to continue)</div>
+      </div>
+
+      <!-- LEMBAR 7 (PESAN PANJANG) -->
+      <div class="book-page-content">
+        <div class="book-title">Happy Birthday sayang! 🥺❤️</div>
+        <div class="book-text" style="text-align: left;">
+I'm so happy to meet u, to share a lot of memories with you, through our ups and downs. But still, I hope we still have a lot of time to spend together. I don't care whether it's easy or hard, but I'll always try my best to stay beside you and cheer you up in every situation you have.
+
+Makasih yaa udah temani aku, udah bantu aku, jadi orang yang lebih baik, jadi orang yang terus berkembang, you have to know that you're very precious🥺, buat ayah kamu, ibu kamu, kakak kamu, teteh kamu, termasuk aku.
+
+I hope you get everything you wanted, apapun itu, aku selalu doakan yang terbaik. And I hope you will always be a better person, for yourself, for your family, for me. And the most important is, I hope you will always be happy and tough in every situation you have to face. Dan semoga, mimpi-mimpi kita, apapun itu, dikabulkan oleh Allah. Aamiin..
+
+Happy birthday sayaaang! See u on Saturday yaaaa!❤️❤️
+        </div>
+        
+        <!-- Foto Bareng (5 foto) -->
+        <div class="img-container" style="margin-top: 15px;">
+          <img src="foto10.jpeg" alt="Us 1" class="book-img">
+          <img src="foto9.jpeg" alt="Us 2" class="book-img">
+          <img src="foto13.jpeg" alt="Us 3" class="book-img">
+          <img src="foto12.jpeg" alt="Us 4" class="book-img">
+          <img src="foto11.jpeg" alt="Us 5" class="book-img">
+        </div>
+        <div class="tap-hint" style="margin-top: 30px;">(You've reached the end. I love you!)</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // --- 1. LOGIN LOGIC ---
+    function checkLogin() {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('login-error');
+
+      // Username: Rafiq | Password: 131103
+      if (user.toLowerCase() === 'rafiq' && pass === '131103') {
+        switchPage('login-page', 'music-page');
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    function switchPage(hideId, showId) {
+      document.getElementById(hideId).classList.remove('active');
+      document.getElementById(showId).classList.add('active');
+    }
+
+    // --- 2. MUSIC LOGIC ---
+    function playMusic() {
+      const audio1 = document.getElementById('bg-music-1');
+      audio1.play();
+      
+      const playBtn = document.getElementById('btn-play');
+      playBtn.innerText = '🎵 Music Playing...';
+      playBtn.disabled = true;
+      
+      document.getElementById('surprise-btn-container').classList.remove('hidden');
+    }
+
+    function goToBalloons() {
+      switchPage('music-page', 'balloon-page');
+      generateBalloons(); 
+    }
+
+    // --- 3. BALLOON LOGIC ---
+    function generateBalloons() {
+      const container = document.getElementById('balloon-container');
+      container.innerHTML = ''; 
+      
+      let contents = ['23', '🎈', '🎈', '🎈', '🎈', '🎈', '🎈', '🎈', '🎈', '🎈'];
+      contents.sort(() => Math.random() - 0.5);
+
+      contents.forEach(content => {
+        const balloon = document.createElement('div');
+        balloon.classList.add('balloon');
+        balloon.innerHTML = '🎈'; 
+        
+        balloon.onclick = function() {
+          if (content === '23') {
+            balloon.innerHTML = '💥 23';
+            balloon.style.color = '#9E2A2B'; 
+            setTimeout(() => {
+              switchPage('balloon-page', 'book-page');
+            }, 800); 
+          } else {
+            balloon.innerHTML = '💥';
+            balloon.classList.add('popped');
+          }
+        };
+        container.appendChild(balloon);
+      });
+    }
+
+    // --- 4. BOOK LOGIC ---
+    let currentBookPage = 0;
+    const bookPages = document.querySelectorAll('.book-page-content');
+
+    function nextPage(event) {
+      // Jangan pindah halaman kalau yang di-tap adalah gambar
+      if(event.target.tagName === 'IMG') return;
+
+      if (currentBookPage < bookPages.length - 1) {
+        bookPages[currentBookPage].classList.remove('active-page');
+        currentBookPage++;
+        bookPages[currentBookPage].classList.add('active-page');
+        
+        document.getElementById('book-container').scrollTop = 0;
+
+        // --- LOGIKA GANTI LAGU ---
+        // Kalau sudah masuk ke Lembar 6 (index 5), ganti lagu ke Barasuara
+        if (currentBookPage === 5) {
+          const audio1 = document.getElementById('bg-music-1');
+          const audio2 = document.getElementById('bg-music-2');
+          
+          audio1.pause(); // Hentikan lagu Taylor Swift
+          audio2.play();  // Putar lagu Barasuara
+        }
+      }
+    }
+  </script>
+</body>
+</html>
