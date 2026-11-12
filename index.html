@@ -136,16 +136,39 @@
       padding: 30px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start; /* Mulai dari atas, biar bisa di-scroll */
+      justify-content: flex-start; 
       align-items: center;
       text-align: center;
       cursor: pointer; 
       overflow-y: auto;
-      -webkit-overflow-scrolling: touch; /* Scroll mulus di HP */
+      -webkit-overflow-scrolling: touch; 
+      overflow-x: hidden; /* Mencegah scroll ke samping saat animasi */
     }
     
-    .book-page-content { display: none; width: 100%; }
-    .book-page-content.active-page { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    /* --- ANIMASI SLIDE UNTUK BUKU --- */
+    .book-page-content { 
+      display: none; 
+      width: 100%; 
+    }
+    
+    .book-page-content.active-page { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 15px; 
+      animation: slideIn 1.2s ease-in-out forwards; /* Transisi 1.2 detik */
+    }
+
+    @keyframes slideIn {
+      0% { 
+        opacity: 0; 
+        transform: translateX(100px); /* Mulai dari kanan */
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateX(0); 
+      }
+    }
     
     .book-title { font-size: 24px; font-weight: bold; color: var(--maroon); margin-bottom: 10px; }
     .book-text { font-size: 16px; line-height: 1.6; margin-bottom: 20px; white-space: pre-wrap; text-align: justify;}
@@ -280,27 +303,35 @@
           <img src="pempekrama.jpg" alt="First Date 1" class="book-img">
           <img src="foto7.jpeg" alt="First Date 2" class="book-img">
         </div>
-
-        <div class="book-text" style="margin-top:15px;">When you finally confessed your feelings and asked me to be your girlfriend before you left for KAIST.</div>
-        <img src="foto_tembak.jpg" alt="Confession" class="book-img" style="margin-bottom: 10px;">
-
-        <div class="book-text">And until now.. we even spend 1 year and more together.</div>
-        <img src="foto_together.jpg" alt="Together" class="book-img">
         <div class="tap-hint">(Tap to continue)</div>
       </div>
 
-      <!-- LEMBAR 6 -->
+      <!-- LEMBAR 6 (Baru: Confess Pakai foto9.jpeg) -->
+      <div class="book-page-content">
+        <div class="book-title">The Confession</div>
+        <div class="book-text">When you finally confessed your feelings and asked me to be your girlfriend before you left for KAIST.</div>
+        <img src="foto9.jpeg" alt="Confession" class="book-img">
+        <div class="tap-hint">(Tap to continue)</div>
+      </div>
+
+      <!-- LEMBAR 7 (Baru: So until 1 year.. Tanpa Foto) -->
+      <div class="book-page-content">
+        <div class="book-title">Time Flies</div>
+        <div class="book-text">So until 1 year.. and more together.</div>
+        <div class="tap-hint">(Tap to continue)</div>
+      </div>
+
+      <!-- LEMBAR 8 (Ganti Lagu) -->
       <div class="book-page-content">
         <div class="book-title">So.. on your birthday,</div>
         <div class="book-text">I just wanted to say..</div>
         <div class="tap-hint">(Tap to continue)</div>
       </div>
 
-      <!-- LEMBAR 7 (PESAN PANJANG) -->
+      <!-- LEMBAR 9 (PESAN PANJANG) -->
       <div class="book-page-content">
         <div class="book-title" style="margin-bottom: 20px;">Happy Birthday sayang! 🥺❤️</div>
         
-        <!-- Teks panjang (di-justify biar rapi) -->
         <div class="book-text">
 I'm so happy to meet u, to share a lot of memories with you, through our ups and downs. But still, I hope we still have a lot of time to spend together. I don't care whether it's easy or hard, but I'll always try my best to stay beside you and cheer you up in every situation you have.
 
@@ -311,7 +342,6 @@ I hope you get everything you wanted, apapun itu, aku selalu doakan yang terbaik
 Happy birthday sayaaang! See u on Saturday yaaaa!❤️❤️
         </div>
         
-        <!-- 5 Foto disusun ke bawah biar gede -->
         <div class="stacked-photos">
           <img src="foto10.jpeg" alt="Us 1" class="book-img">
           <img src="foto9.jpeg" alt="Us 2" class="book-img">
@@ -328,7 +358,6 @@ Happy birthday sayaaang! See u on Saturday yaaaa!❤️❤️
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // --- 1. LOGIN LOGIC ---
     function checkLogin() {
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value.trim();
@@ -346,7 +375,6 @@ Happy birthday sayaaang! See u on Saturday yaaaa!❤️❤️
       document.getElementById(showId).classList.add('active');
     }
 
-    // --- 2. MUSIC LOGIC ---
     function playMusic() {
       const audio1 = document.getElementById('bg-music-1');
       audio1.play();
@@ -363,7 +391,6 @@ Happy birthday sayaaang! See u on Saturday yaaaa!❤️❤️
       generateBalloons(); 
     }
 
-    // --- 3. BALLOON LOGIC ---
     function generateBalloons() {
       const container = document.getElementById('balloon-container');
       container.innerHTML = ''; 
@@ -392,12 +419,10 @@ Happy birthday sayaaang! See u on Saturday yaaaa!❤️❤️
       });
     }
 
-    // --- 4. BOOK LOGIC ---
     let currentBookPage = 0;
     const bookPages = document.querySelectorAll('.book-page-content');
 
     function nextPage(event) {
-      // Jangan pindah halaman kalau yang di-tap adalah gambar atau di dalam area teks
       if(event.target.tagName === 'IMG' || event.target.classList.contains('book-text')) return;
 
       if (currentBookPage < bookPages.length - 1) {
@@ -405,11 +430,11 @@ Happy birthday sayaaang! See u on Saturday yaaaa!❤️❤️
         currentBookPage++;
         bookPages[currentBookPage].classList.add('active-page');
         
-        // Reset scroll ke atas saat ganti halaman
         document.getElementById('book-container').scrollTop = 0;
 
         // --- LOGIKA GANTI LAGU ---
-        if (currentBookPage === 5) {
+        // Karena ada tambahan 2 lembar, Lembar 8 adalah index ke-7 (currentBookPage === 7)
+        if (currentBookPage === 7) {
           const audio1 = document.getElementById('bg-music-1');
           const audio2 = document.getElementById('bg-music-2');
           
